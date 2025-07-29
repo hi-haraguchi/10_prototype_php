@@ -2,15 +2,15 @@
 session_start();
 include('functions.php');
 
-$username = $_POST['username'];
+$mailaddress = $_POST['mailaddress'];
 $password = $_POST['password'];
 
 $pdo = connect_to_db();
 
-$sql = 'SELECT * FROM users_table WHERE username=:username AND password=:password AND deleted_at IS NULL';
+$sql = 'SELECT * FROM users_table WHERE mailaddress=:mailaddress AND password=:password AND deleted_at IS NULL';
 
 $stmt = $pdo->prepare($sql);
-$stmt->bindValue(':username', $username, PDO::PARAM_STR);
+$stmt->bindValue(':mailaddress', $mailaddress, PDO::PARAM_STR);
 $stmt->bindValue(':password', $password, PDO::PARAM_STR);
 
 try {
@@ -24,14 +24,13 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
   echo "<p>ログイン情報に誤りがあります</p>";
-  echo "<a href=todo_login.php>ログイン</a>";
+  echo "<a href=login.php>ログイン</a>";
   exit();
 } else {
   $_SESSION = array();
   $_SESSION['session_id'] = session_id();
-  $_SESSION['user_id'] = $user['id'];
-  $_SESSION['is_admin'] = $user['is_admin'];
-  $_SESSION['username'] = $user['username'];
-  header("Location:todo_read.php");
+  $_SESSION['mailaddress'] = $user['mailaddress'];
+  $_SESSION['user_id'] = $user['user_id'];
+  header("Location:my_contents_read.php");
   exit();
 }

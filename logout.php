@@ -9,5 +9,5 @@ if (isset($_COOKIE[session_name()])) { //session_name()は、セッションID�
 
 session_destroy();
 
-header('Location:todo_login.php');
+header('Location:login.php');
 exit();

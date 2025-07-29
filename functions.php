@@ -2,7 +2,7 @@
 
 function connect_to_db()
 {
-  $dbn = 'mysql:dbname=gs_php_db;charset=utf8mb4;port=3306;host=localhost';
+  $dbn = 'mysql:dbname=gs20250731prototype;charset=utf8mb4;port=3306;host=localhost';
   $user = 'root';
   $pwd = '';
 
@@ -20,7 +20,7 @@ function check_session_id()
     !isset($_SESSION["session_id"]) ||
     $_SESSION["session_id"] != session_id()
   ) {
-    header("Location:todo_login.php");
+    header("Location:login.php");
   } else {
     session_regenerate_id(true);
     $_SESSION["session_id"] = session_id();
