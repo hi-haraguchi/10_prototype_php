@@ -13,7 +13,9 @@ $sql = '
         SELECT
             c.contents_id,
             c.title,
+            c.auther,
             c.kind,
+            c.user_id,
             f.feelings_id,
             f.experienced_year,
             f.experienced_month,
@@ -52,7 +54,10 @@ $sql = '
             // 新しいcontentの場合、基本情報を追加
             $organized_contents[$contents_id] = [
                 'title' => htmlspecialchars($record['title'], ENT_QUOTES, 'UTF-8'),
+                'auther' => htmlspecialchars($record['auther'], ENT_QUOTES, 'UTF-8'),
                 'kind' => htmlspecialchars($record['kind'], ENT_QUOTES, 'UTF-8'),
+                'contents_id' => $contents_id, 
+                'user_id' => htmlspecialchars($record['user_id'], ENT_QUOTES, 'UTF-8'),
                 'feelings' => [] // feelingsを格納する配列
             ];
         }
@@ -78,27 +83,42 @@ $sql = '
 <html lang="ja">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>触れたエンタメ一覧</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>触れたエンタメ一覧</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        .content-item { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
+        .content-title { font-size: 1.5em; color: #333; margin-bottom: 10px; }
+        .feeling-list { list-style: none; padding: 0; margin-top: 10px; }
+        .feeling-item { background-color: #f9f9f9; border-left: 3px solid #007bff; padding: 10px; margin-bottom: 5px; border-radius: 4px; }
+        .feeling-item span { margin-right: 10px; color: #555; }
+        .no-feelings { color: #888; font-style: italic; }
+    </style>
 </head>
 
 <body>
-  <fieldset>
+    <fieldset>
     <legend>触れたエンタメ一覧</legend>
     <?= $mailaddress ?>
     <a href="contents_input.php">エンタメ入力画面</a>
     <a href="logout.php">logout</a>
 
 
-     <?php if (empty($organized_contents)): ?>
+    <?php if (empty($organized_contents)): ?>
         <p>登録されたコンテンツはありません。</p>
     <?php else: ?>
         <?php foreach ($organized_contents as $contents_id => $content_data): ?>
             <div class="content-item">
-                <h2 class="content-title"><?= $content_data['title'] ?> (<?= $content_data['kind'] ?>)</h2>
+                <h2 class="content-title"><?= $content_data['title'] ?> <?= $content_data['auther'] ?>(<?= $content_data['kind'] ?>)</h2>
+                <a href="feelings_input.php?
+                user_id=<?= htmlspecialchars($content_data['user_id'], ENT_QUOTES, 'UTF-8') ?>
+                &contents_id=<?= htmlspecialchars($content_data['contents_id'], ENT_QUOTES, 'UTF-8') ?>
+                &title=<?= htmlspecialchars($content_data['title'], ENT_QUOTES, 'UTF-8') ?>
+                &auther=<?= htmlspecialchars($content_data['auther'], ENT_QUOTES, 'UTF-8') ?>
+                ">感想の追加</a>
                 <?php if (empty($content_data['feelings'])): ?>
-                    <p class="no-feelings">まだ感情が登録されていません。</p>
+                    <p class="no-feelings">まだ感想が登録されていません。</p>
                 <?php else: ?>
                     <ul class="feeling-list">
                         <?php foreach ($content_data['feelings'] as $feeling): ?>
@@ -119,7 +139,7 @@ $sql = '
 
 
 
-  </fieldset>
+</fieldset>
 </body>
 
 </html>

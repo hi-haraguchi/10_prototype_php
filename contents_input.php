@@ -22,12 +22,17 @@ $user_id = $_SESSION["user_id"];
     <fieldset>
       <legend>触れたエンタメの入力</legend>
       <?= $mailaddress ?>
-      <a href="contents_read.php">触れたエンタメの一覧画面</a>
+      <a href="my_contents_read.php">触れたエンタメの一覧画面</a>
       <a href="logout.php">logout</a>
       <div>
-        <label for="title">タイトル</label>
+        <label for="title">タイトルや作品名</label>
         <input type="text" name="title" id="title">
       </div>
+
+      <div>
+        <label for="auther">作者や監督、出演者など</label>
+        <input type="text" name="auther" id="auther">
+      </div>      
 
       <div>
         <label for="kind">種類</label>

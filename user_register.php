@@ -78,6 +78,16 @@
       </div>
 
       <div>
+        <label for="limit_search">１日のおすすめエンタメの検索回数</label>
+        <select id="limit_search" name="limit_search">
+          <option value="null">設定なし</option>
+          <option value="3">３回</option>
+          <option value="5">５回</option>
+          <option value="10">１０回</option>
+        </select>
+      </div>      
+
+      <div>
         <button>ユーザ登録します！</button>
       </div>
       <a href="login.php">登録済みならログイン画面へ</a>

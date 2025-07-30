@@ -8,7 +8,8 @@ if (
   !isset($_POST['interval_manga']) || $_POST['interval_manga'] === '' ||
   !isset($_POST['interval_movie']) || $_POST['interval_movie'] === '' ||
   !isset($_POST['interval_music']) || $_POST['interval_music'] === '' ||
-  !isset($_POST['interval_podcast']) || $_POST['interval_podcast'] === ''
+  !isset($_POST['interval_podcast']) || $_POST['interval_podcast'] === ''||
+  !isset($_POST['limit_search']) || $_POST['limit_search'] === ''
 ) {
   echo json_encode(["error_msg" => "no input"]);
   exit();
@@ -21,6 +22,7 @@ $interval_manga = $_POST["interval_manga"];
 $interval_movie = $_POST["interval_movie"];
 $interval_music = $_POST["interval_music"];
 $interval_podcast = $_POST["interval_podcast"];
+$limit_search = $_POST["limit_search"];
 
 $pdo = connect_to_db();
 
@@ -42,7 +44,7 @@ if ($stmt->fetchColumn() > 0) {
   exit();
 }
 
-$sql = 'INSERT INTO users_table(user_id, mailaddress, password, interval_printbook, interval_manga, interval_movie, interval_music ,interval_podcast) VALUES(NULL, :mailaddress, :password, :interval_printbook, :interval_manga, :interval_movie, :interval_music, :interval_podcast)';
+$sql = 'INSERT INTO users_table(user_id, mailaddress, password, interval_printbook, interval_manga, interval_movie, interval_music, interval_podcast, limit_search) VALUES(NULL, :mailaddress, :password, :interval_printbook, :interval_manga, :interval_movie, :interval_music, :interval_podcast, :limit_search)';
 
 $stmt = $pdo->prepare($sql);
 $stmt->bindValue(':mailaddress', $mailaddress, PDO::PARAM_STR);
@@ -52,6 +54,7 @@ $stmt->bindValue(':interval_manga',$interval_manga,($interval_manga === null) ? 
 $stmt->bindValue(':interval_movie',$interval_movie,($interval_movie === null) ? PDO::PARAM_NULL : PDO::PARAM_STR);
 $stmt->bindValue(':interval_music',$interval_music,($interval_music === null) ? PDO::PARAM_NULL : PDO::PARAM_STR);
 $stmt->bindValue(':interval_podcast',$interval_podcast,($interval_podcast === null) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+$stmt->bindValue(':limit_search',$limit_search,($limit_search === null) ? PDO::PARAM_NULL : PDO::PARAM_STR);
 
 
 try {
