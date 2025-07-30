@@ -3,53 +3,67 @@
 // var_dump($_GET);
 // exit;
 
-include('functions.php');
+session_start();
+include("functions.php");
+check_session_id(); 
 
-$user_id = $_GET['user_id'];
-$todo_id = $_GET['todo_id'];
+if (!isset($_GET['contents_id']) || $_GET['contents_id'] === '') {
+    exit('paramError: contents_id が指定されていません。');
+}
+
+$contents_id = $_GET['contents_id']; 
+$user_id = $_SESSION['user_id'];
+
 
 $pdo = connect_to_db();
 
-// $sql = 'INSERT INTO like_table (id, user_id, todo_id, created_at) VALUES (NULL, :user_id, :todo_id, now())';
-$sql = 'SELECT COUNT(*) FROM like_table WHERE user_id=:user_id AND todo_id=:todo_id';
-$stmt = $pdo->prepare($sql);
-$stmt->bindValue(':user_id', $user_id, PDO::PARAM_STR);
-$stmt->bindValue(':todo_id', $todo_id, PDO::PARAM_STR);
-
 try {
-  $status = $stmt->execute();
+    // 現在の selected10 の値を取得
+    $sql_select = 'SELECT selected10 FROM contents_table WHERE contents_id = :contents_id AND user_id = :user_id';
+    $stmt_select = $pdo->prepare($sql_select);
+    $stmt_select->bindValue(':contents_id', $contents_id, PDO::PARAM_INT);
+    $stmt_select->bindValue(':user_id', $user_id, PDO::PARAM_INT); // ユーザー自身のコンテンツか確認
+    $stmt_select->execute();
+    $record = $stmt_select->fetch(PDO::FETCH_ASSOC);
+
+    // 該当するコンテンツが見つからない場合
+    if (!$record) {
+        exit('Error: 指定されたコンテンツが見つからないか、アクセス権がありません。');
+    }
+
+    $current_selected10 = $record['selected10'];
+
+    // 4. selected10 の値を切り替える
+    $new_selected10 = '';
+    if ($current_selected10 === '・') {
+        $new_selected10 = '☆';
+    } else {
+        $new_selected10 = '・';
+    }
+
+    // 5. selected10 の値を更新
+    $sql_update = 'UPDATE contents_table SET selected10 = :selected10 WHERE contents_id = :contents_id AND user_id = :user_id';
+    $stmt_update = $pdo->prepare($sql_update);
+    $stmt_update->bindValue(':selected10', $new_selected10, PDO::PARAM_STR);
+    $stmt_update->bindValue(':contents_id', $contents_id, PDO::PARAM_INT);
+    $stmt_update->bindValue(':user_id', $user_id, PDO::PARAM_INT); // ユーザー自身のコンテンツか確認
+    $status = $stmt_update->execute();
+
+    if ($status === false) {
+        // SQL実行に失敗した場合の処理
+        $error = $stmt_update->errorInfo();
+        exit('SQL Error:' . $error[2]);
+    } else {
+        // 6. 更新成功後、元のページにリダイレクト
+        // 必要に応じて、リダイレクト先を調整してください
+        header("Location: my_contents_read.php");
+        exit();
+    }
+
 } catch (PDOException $e) {
-  echo json_encode(["sql error" => "{$e->getMessage()}"]);
-  exit();
+    // データベース接続またはクエリ実行時のエラー
+    echo json_encode(["sql error" => "{$e->getMessage()}"]);
+    exit();
 }
+?>
 
-
-$like_count = $stmt->fetchColumn();
-
-
-// var_dump($like_count);
-// exit();
-
-
-if ($like_count > 0) {
-  // いいねされている状態
-  $sql = 'DELETE FROM like_table WHERE user_id=:user_id AND todo_id=:todo_id';
-} else {
-  // いいねされていない状態
-  $sql = 'INSERT INTO like_table (id, user_id, todo_id, created_at) VALUES (NULL, :user_id, :todo_id, now())';
-}
-
-// 以下は前項と変更なし
-$stmt = $pdo->prepare($sql);
-$stmt->bindValue(':user_id', $user_id, PDO::PARAM_STR);
-$stmt->bindValue(':todo_id', $todo_id, PDO::PARAM_STR);
-
-try {
-  $status = $stmt->execute();
-} catch (PDOException $e) {
-  echo json_encode(["sql error" => "{$e->getMessage()}"]);
-  exit();
-}
-
-header("Location:todo_read.php");
-exit();

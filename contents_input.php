@@ -23,6 +23,7 @@ $user_id = $_SESSION["user_id"];
       <legend>触れたエンタメの入力</legend>
       <?= $mailaddress ?>
       <a href="my_contents_read.php">触れたエンタメの一覧画面</a>
+      <a href="all_tag_read.php">エンタメを探す</a>
       <a href="logout.php">logout</a>
       <div>
         <label for="title">タイトルや作品名</label>

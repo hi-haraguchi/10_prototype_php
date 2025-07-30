@@ -16,6 +16,7 @@ $sql = '
             c.auther,
             c.kind,
             c.user_id,
+            c.selected10,
             f.feelings_id,
             f.experienced_year,
             f.experienced_month,
@@ -58,6 +59,7 @@ $sql = '
                 'kind' => htmlspecialchars($record['kind'], ENT_QUOTES, 'UTF-8'),
                 'contents_id' => $contents_id, 
                 'user_id' => htmlspecialchars($record['user_id'], ENT_QUOTES, 'UTF-8'),
+                'selected10' => htmlspecialchars($record['selected10'], ENT_QUOTES, 'UTF-8'),
                 'feelings' => [] // feelingsを格納する配列
             ];
         }
@@ -102,6 +104,7 @@ $sql = '
     <legend>触れたエンタメ一覧</legend>
     <?= $mailaddress ?>
     <a href="contents_input.php">エンタメ入力画面</a>
+    <a href="makeup_whoiam.php">自分を構成するエンタメ一覧</a>
     <a href="logout.php">logout</a>
 
 
@@ -111,12 +114,18 @@ $sql = '
         <?php foreach ($organized_contents as $contents_id => $content_data): ?>
             <div class="content-item">
                 <h2 class="content-title"><?= $content_data['title'] ?> <?= $content_data['auther'] ?>(<?= $content_data['kind'] ?>)</h2>
+
                 <a href="feelings_input.php?
                 user_id=<?= htmlspecialchars($content_data['user_id'], ENT_QUOTES, 'UTF-8') ?>
                 &contents_id=<?= htmlspecialchars($content_data['contents_id'], ENT_QUOTES, 'UTF-8') ?>
                 &title=<?= htmlspecialchars($content_data['title'], ENT_QUOTES, 'UTF-8') ?>
                 &auther=<?= htmlspecialchars($content_data['auther'], ENT_QUOTES, 'UTF-8') ?>
                 ">感想の追加</a>
+
+                <a href="like_create.php?contents_id=<?= htmlspecialchars($content_data['contents_id'], ENT_QUOTES, 'UTF-8') ?>">
+                <?= htmlspecialchars($content_data['selected10'], ENT_QUOTES, 'UTF-8') ?>
+                </a>
+
                 <?php if (empty($content_data['feelings'])): ?>
                     <p class="no-feelings">まだ感想が登録されていません。</p>
                 <?php else: ?>
