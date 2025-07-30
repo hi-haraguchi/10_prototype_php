@@ -52,11 +52,34 @@ $sql = '
         $contents_id = $record['contents_id'];
 
         if (!isset($organized_contents[$contents_id])) {
+
+        $display_kind = htmlspecialchars($record['kind'], ENT_QUOTES, 'UTF-8');
+        switch ($record['kind']) {
+            case 'printbook':
+                $display_kind = '本';
+                break;
+            case 'manga':
+                $display_kind = 'マンガ';
+                break;
+            case 'movie':
+                $display_kind = '映画';
+                break;
+            case 'music':
+                $display_kind = '音楽';
+                break;
+            case 'podcast':
+                $display_kind = 'ポッドキャスト';
+                break;
+            case 'others':
+                $display_kind = 'その他';
+                break;                
+        }
+
             // 新しいcontentの場合、基本情報を追加
             $organized_contents[$contents_id] = [
                 'title' => htmlspecialchars($record['title'], ENT_QUOTES, 'UTF-8'),
                 'auther' => htmlspecialchars($record['auther'], ENT_QUOTES, 'UTF-8'),
-                'kind' => htmlspecialchars($record['kind'], ENT_QUOTES, 'UTF-8'),
+                'kind' => $display_kind,
                 'contents_id' => $contents_id, 
                 'user_id' => htmlspecialchars($record['user_id'], ENT_QUOTES, 'UTF-8'),
                 'selected10' => htmlspecialchars($record['selected10'], ENT_QUOTES, 'UTF-8'),

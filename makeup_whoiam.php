@@ -3,15 +3,16 @@ session_start();
 include("functions.php");
 check_session_id();
 
-$user_id = $_SESSION["user_id"]; 
+$user_id = $_SESSION["user_id"];
 $mailaddress = $_SESSION["mailaddress"];
 
-$pdo = connect_to_db(); 
+$pdo = connect_to_db();
 
-$sql = 'SELECT title, auther FROM contents_table WHERE selected10 = "☆" AND user_id = :user_id ORDER BY title ASC';
+// SQLクエリ: kindカラムも取得するように変更
+$sql = 'SELECT title, auther, kind FROM contents_table WHERE selected10 = "☆" AND user_id = :user_id ORDER BY title ASC';
 
 $stmt = $pdo->prepare($sql);
-$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT); 
+$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
 
 try {
     $status = $stmt->execute();
@@ -26,10 +27,33 @@ $output = "";
 $counter = 1; // 1, 2, 3... の番号を表示するためのカウンター
 foreach ($result as $record) {
     $title = htmlspecialchars($record["title"], ENT_QUOTES, 'UTF-8');
-    $auther = htmlspecialchars($record["auther"], ENT_QUOTES, 'UTF-8');
+    $auther = htmlspecialchars($record["auther"] ?? '', ENT_QUOTES, 'UTF-8'); // autherがない場合も考慮
+
+    // kindの値を日本語に変換
+    $display_kind = htmlspecialchars($record['kind'] ?? '', ENT_QUOTES, 'UTF-8'); // まずはデフォルトでエスケープ
+    switch ($record['kind']) {
+            case 'printbook':
+                $display_kind = '本';
+                break;
+            case 'manga':
+                $display_kind = 'マンガ';
+                break;
+            case 'movie':
+                $display_kind = '映画';
+                break;
+            case 'music':
+                $display_kind = '音楽';
+                break;
+            case 'podcast':
+                $display_kind = 'ポッドキャスト';
+                break;
+            case 'others':
+                $display_kind = 'その他';
+                break;  
+    }
 
     $output .= "
-        <p>{$counter}. {$title} {$auther}</p>
+        <p>{$counter}. {$title} {$auther} ({$display_kind})</p>
     ";
     $counter++; // カウンターをインクリメント
 }

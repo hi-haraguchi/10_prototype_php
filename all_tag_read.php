@@ -12,6 +12,7 @@ $sql = '
         c.contents_id,
         c.title,
         c.auther,
+        c.kind,  -- kind を取得
         f.part,
         f.feelings,
         f.tag
@@ -20,12 +21,14 @@ $sql = '
     JOIN
         feelings_table AS f ON c.contents_id = f.contents_id
     WHERE
-        f.tag IS NOT NULL -- tagがNULLでないものに絞る (タグごとの表示なので)
+        f.tag IS NOT NULL
+        AND c.user_id = :user_id -- ユーザー自身のコンテンツに絞り込む場合
     ORDER BY
-        f.tag, c.title, f.part; -- タグ、タイトル、パートでソート
+        f.tag, c.title, f.part;
 ';
 
 $stmt = $pdo->prepare($sql);
+$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT); // ユーザーIDをバインド
 
 try {
     $status = $stmt->execute();
@@ -45,13 +48,36 @@ foreach ($results as $record) {
         $organized_by_tag[$tag] = [];
     }
 
+    // kind の値を変換
+    $display_kind = htmlspecialchars($record['kind'] ?? '', ENT_QUOTES, 'UTF-8'); // まずはデフォルトでエスケープ
+    switch ($record['kind']) {
+            case 'printbook':
+                $display_kind = '本';
+                break;
+            case 'manga':
+                $display_kind = 'マンガ';
+                break;
+            case 'movie':
+                $display_kind = '映画';
+                break;
+            case 'music':
+                $display_kind = '音楽';
+                break;
+            case 'podcast':
+                $display_kind = 'ポッドキャスト';
+                break;
+            case 'others':
+                $display_kind = 'その他';
+                break;     
+    }
+
     // 各アイテムの情報を格納
     $organized_by_tag[$tag][] = [
-        'title' => htmlspecialchars($record['title'], ENT_QUOTES, 'UTF-8'),
-        'auther' => htmlspecialchars($record['auther'], ENT_QUOTES, 'UTF-8'),
-        'part' => ($record['part'] !== null) ? htmlspecialchars($record['part'], ENT_QUOTES, 'UTF-8') : '---',
-        // feelingsも表示したい場合は追加
-        // 'feelings' => htmlspecialchars($record['feelings'], ENT_QUOTES, 'UTF-8')
+        'title'    => htmlspecialchars($record['title'], ENT_QUOTES, 'UTF-8'),
+        'auther'   => htmlspecialchars($record['auther'] ?? '', ENT_QUOTES, 'UTF-8'),
+        'kind'     => $display_kind, // 変換後のkindを格納
+        'part'     => ($record['part'] !== null) ? htmlspecialchars($record['part'], ENT_QUOTES, 'UTF-8') : '---',
+        // 'feelings' => htmlspecialchars($record['feelings'] ?? '', ENT_QUOTES, 'UTF-8') 
     ];
 }
 
@@ -77,34 +103,39 @@ foreach ($results as $record) {
 </head>
 
 <body>
-  <fieldset>
-    <legend>エンタメを探す</legend>
-    <a href="contents_input.php">エンタメ入力画面</a>
-    <a href="logout.php">logout</a>
-<?php if (empty($organized_by_tag)): ?>
-        <p class="no-entries">登録されたタグ付きコンテンツはありません。</p>
-    <?php else: ?>
-        <?php foreach ($organized_by_tag as $tag => $contents_and_feelings): ?>
-            <div class="tag-section">
-                <h2 class="tag-heading"><?= $tag ?></h2>
-                <?php foreach ($contents_and_feelings as $item): ?>
-                    <div class="content-entry">
-                        <p class="content-details">
-                            <strong><?= $item['title'] ?></strong>
-                            <?php if (!empty($item['auther'])): ?>
-                                (<?= $item['auther'] ?>)
+    <fieldset>
+        <legend>エンタメを探す</legend>
+        <a href="contents_input.php">エンタメ入力画面</a>
+        <a href="logout.php">logout</a>
+        <?php if (empty($organized_by_tag)): ?>
+            <p class="no-entries">登録されたタグ付きコンテンツはありません。</p>
+        <?php else: ?>
+            <?php foreach ($organized_by_tag as $tag => $contents_and_feelings): ?>
+                <div class="tag-section">
+                    <h2 class="tag-heading"><?= $tag ?></h2>
+                    <?php foreach ($contents_and_feelings as $item): ?>
+                        <div class="content-entry">
+                            <p class="content-details">
+                                <strong><?= $item['title'] ?></strong>
+                                <?php if (!empty($item['auther'])): ?>
+                                    (<?= $item['auther'] ?>)
+                                <?php endif; ?>
+                                <?php if (!empty($item['kind'])): // kind が空でなければ表示 ?>
+                                    [<?= $item['kind'] ?>]
+                                <?php endif; ?>
+                                <?php if (!empty($item['part']) && $item['part'] !== '---'): ?>
+                                    [<?= $item['part'] ?>]
+                                <?php endif; ?>
+                            </p>
+                            <?php if (!empty($item['feelings'])): ?>
+                                <p><small>感想: <?= $item['feelings'] ?></small></p>
                             <?php endif; ?>
-                            <?php if (!empty($item['part']) && $item['part'] !== '---'): ?>
-                                [<?= $item['part'] ?>]
-                            <?php endif; ?>
-                        </p>
-                        
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php endforeach; ?>
-    <?php endif; ?>
-  </fieldset>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </fieldset>
 </body>
 
 </html>
