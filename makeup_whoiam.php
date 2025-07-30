@@ -4,6 +4,7 @@ include("functions.php");
 check_session_id();
 
 $user_id = $_SESSION["user_id"]; 
+$mailaddress = $_SESSION["mailaddress"];
 
 $pdo = connect_to_db(); 
 
@@ -47,6 +48,7 @@ foreach ($result as $record) {
 <body>
     <fieldset>
         <legend>自分を構成するエンタメ要素一覧（１０個まで登録可）</legend>
+        <?= $mailaddress ?>
         <a href="my_contents_read.php">元のエンタメ一覧画面へ</a>
         <a href="logout.php">logout</a>
         <hr>
