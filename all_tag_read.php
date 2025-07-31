@@ -22,13 +22,11 @@ $sql = '
         feelings_table AS f ON c.contents_id = f.contents_id
     WHERE
         f.tag IS NOT NULL
-        AND c.user_id = :user_id -- ユーザー自身のコンテンツに絞り込む場合
     ORDER BY
         f.tag, c.title, f.part;
 ';
 
 $stmt = $pdo->prepare($sql);
-$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT); // ユーザーIDをバインド
 
 try {
     $status = $stmt->execute();
