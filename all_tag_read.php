@@ -104,7 +104,10 @@ foreach ($results as $record) {
 
 <body>
         <h3>エンタメを探す</h3>
-        <a href="contents_input.php">エンタメ入力画面</a>
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a href="contents_input.php">エンタメ入力画面</a>
+        </div>
+        
         <?php if (empty($organized_by_tag)): ?>
             <p class="no-entries">登録されたタグ付きコンテンツはありません。</p>
         <?php else: ?>

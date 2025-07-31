@@ -56,14 +56,14 @@ $record = $stmt->fetch(PDO::FETCH_ASSOC);
             padding-bottom: 5px;
             text-align: center;
             width: 100%;
-            max-width: 600px; /* Align with form width */
+            max-width: 1080px; /* Align with form width */
         }
 
         hr {
             border: none;
             border-top: 1px solid #ddd;
             width: 100%;
-            max-width: 600px; /* Align with form width */
+            max-width: 1080px; /* Align with form width */
             margin: 20px 0;
         }
 
@@ -73,7 +73,7 @@ $record = $stmt->fetch(PDO::FETCH_ASSOC);
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 600px; /* Consistent form width */
+            max-width: 1080px; /* Consistent form width */
             display: flex;
             flex-direction: column;
             gap: 15px; /* Space between form fields */
@@ -140,7 +140,7 @@ $record = $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
         label {
-            flex-basis: 400px; /* Increased width for labels to accommodate longer text */
+            flex-basis: 480px; /* Increased width for labels to accommodate longer text */
             text-align: right; /* Align label text to the right */
             margin-right: 15px; /* Space between label and input */
             color: #444;

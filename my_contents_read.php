@@ -332,10 +332,11 @@ $sql = '
 
     <h3>触れたエンタメ一覧</h3>
     <hr>
-
+    
+    <div class="header-right-align">
     <a href="contents_input.php">エンタメ入力画面</a>
     <a href="makeup_whoiam.php">自分を構成するエンタメ一覧</a>
-
+    </div>
 
     <?php if (empty($organized_contents)): ?>
         <p>登録されたコンテンツはありません。</p>
