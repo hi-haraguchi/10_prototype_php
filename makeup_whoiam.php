@@ -67,15 +67,145 @@ foreach ($result as $record) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>自分を構成するエンタメ要素一覧</title>
+  <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5; /* Light grey background */
+            color: #333;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center content horizontally */
+            min-height: 100vh; /* Full viewport height */
+        }
+
+        /* Header containing mailaddress and logout */
+        .header-top {
+            display: flex;
+            justify-content: flex-end; /* Pushes items to the right end */
+            align-items: center;
+            gap: 20px; /* Space between items */
+            margin-bottom: 20px;
+            width: 100%; /* Take full width to allow right alignment */
+            max-width: 800px; /* Adjust max-width to suit content */
+            padding: 0 10px; /* Small padding */
+            box-sizing: border-box;
+        }
+
+        .header-top p {
+            margin: 0;
+            font-size: 1em;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .header-top a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: color 0.3s ease;
+        }
+
+        .header-top a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 100%;
+            max-width: 800px; /* Align with content width */
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            width: 100%;
+            max-width: 800px; /* Align with content width */
+            margin: 20px 0;
+        }
+
+        /* Navigation link for "元のエンタメ一覧画面へ" */
+        .nav-link {
+            display: block; /* Make it a block element */
+            text-align: center;
+            background-color: #e9ecef;
+            color: #007bff;
+            padding: 10px 18px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 30px; /* Space below the link */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            width: 100%;
+            max-width: 300px; /* Limit width for the button-like link */
+        }
+
+        .nav-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Container for the list of contents */
+        .content-list-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px; /* Max width for the content area */
+            box-sizing: border-box;
+        }
+
+        .content-list-container p {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px dashed #eee; /* Subtle separator for each item */
+            color: #444;
+        }
+
+        .content-list-container p:last-child {
+            border-bottom: none; /* No border for the last item */
+            margin-bottom: 0;
+        }
+
+        /* Message for no content */
+        .no-content-message {
+            text-align: center;
+            font-size: 1.2em;
+            color: #888;
+            margin-top: 50px;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 400px; /* Smaller width for message box */
+        }
+    </style>
+
+
 </head>
 
 <body>
-    <fieldset>
-        <legend>自分を構成するエンタメ要素一覧（１０個まで登録可）</legend>
-        <?= $mailaddress ?>
-        <a href="my_contents_read.php">元のエンタメ一覧画面へ</a>
-        <a href="logout.php">logout</a>
+    <div class="header-top">
+        <p><?= $mailaddress ?></p>
+        <a href="logout.php">ログアウト</a>
+    </div>
+
+        <h3>自分を構成するエンタメ要素一覧（１０個まで登録可）</h3>
         <hr>
+
+        <a href="my_contents_read.php">元のエンタメ一覧画面へ</a>
 
         <?php if (empty($result)): // $resultが空の場合（お気に入りがない場合） ?>
             <p>お気に入りのコンテンツはまだ登録されていません。</p>
@@ -83,7 +213,6 @@ foreach ($result as $record) {
             <?= $output ?>
         <?php endif; ?>
 
-    </fieldset>
 </body>
 
 

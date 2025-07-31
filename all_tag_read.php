@@ -103,10 +103,8 @@ foreach ($results as $record) {
 </head>
 
 <body>
-    <fieldset>
-        <legend>エンタメを探す</legend>
+        <h3>エンタメを探す</h3>
         <a href="contents_input.php">エンタメ入力画面</a>
-        <a href="logout.php">logout</a>
         <?php if (empty($organized_by_tag)): ?>
             <p class="no-entries">登録されたタグ付きコンテンツはありません。</p>
         <?php else: ?>
@@ -124,7 +122,7 @@ foreach ($results as $record) {
                                     [<?= $item['kind'] ?>]
                                 <?php endif; ?>
                                 <?php if (!empty($item['part']) && $item['part'] !== '---'): ?>
-                                    [<?= $item['part'] ?>]
+                                    <?= $item['part'] ?>
                                 <?php endif; ?>
                             </p>
                             <?php if (!empty($item['feelings'])): ?>
@@ -135,7 +133,6 @@ foreach ($results as $record) {
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
-    </fieldset>
 </body>
 
 </html>
