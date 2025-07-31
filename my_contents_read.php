@@ -112,23 +112,229 @@ $sql = '
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>触れたエンタメ一覧</title>
     <style>
-        body { font-family: sans-serif; margin: 20px; }
-        .content-item { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
-        .content-title { font-size: 1.5em; color: #333; margin-bottom: 10px; }
-        .feeling-list { list-style: none; padding: 0; margin-top: 10px; }
-        .feeling-item { background-color: #f9f9f9; border-left: 3px solid #007bff; padding: 10px; margin-bottom: 5px; border-radius: 4px; }
-        .feeling-item span { margin-right: 10px; color: #555; }
-        .no-feelings { color: #888; font-style: italic; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5; /* Light grey background */
+            color: #333;
+            box-sizing: border-box;
+        }
+
+        .header-right-align {
+            display: flex; /* Flexboxを有効にする */
+            justify-content: flex-end; /* アイテムをコンテナの右端に寄せる */
+            align-items: center; /* アイテムを垂直方向の中央に揃える */
+            gap: 20px; /* アイテム間のスペース */
+            margin-bottom: 20px; /* 下部との余白 */
+            padding: 0 10px; /* 左右のパディング */
+        }
+
+        /* Header containing mailaddress and logout */
+        .header-top {
+            display: flex;
+            justify-content: space-between; /* Pushes items to ends */
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 10px; /* Some padding for alignment */
+        }
+
+        .header-top p {
+            margin: 0; /* Remove default paragraph margin */
+            font-size: 1em;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .header-top .links {
+            display: flex;
+            gap: 15px; /* Space between logout and other links */
+        }
+
+        .header-top a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: color 0.3s ease;
+        }
+
+        .header-top a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+            text-align: center;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 30px 0;
+        }
+
+        /* Navigation links below the hr */
+        .nav-links {
+            display: flex;
+            gap: 20px; /* Space between navigation links */
+            margin-bottom: 30px;
+            justify-content: center; /* Center the navigation links */
+        }
+
+        .nav-links a {
+            background-color: #e9ecef;
+            color: #007bff;
+            padding: 10px 18px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+
+        /* Content List Items */
+        .content-item {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: relative; /* For positioning child elements */
+        }
+
+        .content-title {
+            font-size: 1.8em;
+            color: #2c3e50; /* Darker title color */
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .content-actions {
+            display: flex;
+            gap: 15px; /* Space between action links */
+            margin-bottom: 15px;
+        }
+
+        .content-actions a {
+            display: inline-block;
+            background-color: #6c757d; /* Gray for actions */
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        .content-actions a:hover {
+            background-color: #5a6268;
+        }
+
+        /* Specific style for the like/selected10 button */
+        .like-button {
+            background-color: #ffc107; /* Yellow for like button */
+            color: #333;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1.1em; /* Slightly larger for emphasis */
+            margin-left: auto; /* Pushes the like button to the right within its flex container */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .like-button:hover {
+            background-color: #e0a800;
+            transform: translateY(-1px);
+        }
+
+
+        .feeling-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+            border-top: 1px dashed #e0e0e0;
+            padding-top: 20px;
+        }
+
+        .feeling-item {
+            background-color: #fefefe;
+            border-left: 4px solid #007bff; /* More prominent border */
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.03);
+            display: flex; /* Use flexbox for feeling details */
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 10px; /* Space between feeling spans */
+            align-items: center;
+        }
+
+        .feeling-item span {
+            color: #34495e; /* Darker text for feeling details */
+            font-size: 0.95em;
+        }
+
+        .feeling-item span:first-of-type { /* Style for year */
+            font-weight: bold;
+        }
+        .feeling-item span:last-of-type { /* Style for tag */
+            font-style: italic;
+            color: #666;
+        }
+
+
+        .no-feelings {
+            color: #888;
+            font-style: italic;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fdfdff;
+            border-radius: 5px;
+            border: 1px dashed #e0e0e0;
+            text-align: center;
+        }
+
+        /* No contents message */
+        .no-contents {
+            text-align: center;
+            font-size: 1.2em;
+            color: #888;
+            margin-top: 50px;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
     </style>
 </head>
 
 <body>
-    <fieldset>
-    <legend>触れたエンタメ一覧</legend>
-    <?= $mailaddress ?>
+    <div class="header-right-align">
+        <p><?= htmlspecialchars($mailaddress, ENT_QUOTES, 'UTF-8') ?></p>
+        <a href="logout.php">ログアウト</a>
+    </div>
+
+    <h3>触れたエンタメ一覧</h3>
+    <hr>
+
     <a href="contents_input.php">エンタメ入力画面</a>
     <a href="makeup_whoiam.php">自分を構成するエンタメ一覧</a>
-    <a href="logout.php">logout</a>
 
 
     <?php if (empty($organized_contents)): ?>
@@ -170,8 +376,6 @@ $sql = '
     <?php endif; ?>
 
 
-
-</fieldset>
 </body>
 
 </html>
